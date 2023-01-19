@@ -1,8 +1,15 @@
-[Nest](https://github.com/nestjs/nest) API com Nest.js
+API desenvolvida com [Nest](https://github.com/nestjs/nest) para o [blog](https://github.com/nicomoraes/blog-vite).
 
 ## Instalação
 ```bash
 $ yarn install
+```
+
+## Preencher váriaveis de ambiente
+```env
+PORT=
+NODE_ENV=
+DATABASE_URL=PROVIDER://USER:PASSWORD@HOST:PORT/DATABASE
 ```
 
 ## Rodar o servidor
