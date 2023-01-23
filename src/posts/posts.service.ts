@@ -31,6 +31,14 @@ export class PostsService {
     return this.postRepository.findOne(slug);
   }
 
+  async findByFeatured(): Promise<PostEntity[]> {
+    return this.postRepository.findByFeatured();
+  }
+
+  async findByTheLastSixCreated(): Promise<PostEntity[]> {
+    return this.postRepository.findByTheLastSixCreated();
+  }
+
   async update(
     slug: string,
     updatePostDto: UpdatePostDto,

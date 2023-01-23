@@ -5,6 +5,7 @@ import { Post } from '@prisma/client';
 import { transformToDataObject } from 'src/utils/formatter';
 import { UpdatePostDto } from '../dto/update-post.dto';
 import { QueryParams } from '../interfaces/query-params';
+import { includePostCategories } from 'src/utils/filters';
 
 @Injectable()
 export class PostRepository {
@@ -26,7 +27,7 @@ export class PostRepository {
     });
   }
 
-  async findAll(query?: QueryParams) {
+  async findAll(query?: QueryParams): Promise<Post[]> {
     return this.prisma.post.findMany({
       where: {
         title: {
@@ -41,32 +42,40 @@ export class PostRepository {
           },
         },
       },
-      include: {
-        categories: {
-          select: {
-            category: true,
-          },
-        },
-      },
+      include: includePostCategories,
     });
   }
 
-  async findOne(slug: string) {
+  async findOne(slug: string): Promise<Post> {
     return this.prisma.post.findUnique({
       where: {
         slug,
       },
-      include: {
-        categories: {
-          select: {
-            category: true,
-          },
-        },
-      },
+      include: includePostCategories,
     });
   }
 
-  async update(slug: string, { ...updatePostDto }: UpdatePostDto) {
+  async findByFeatured(): Promise<Post[]> {
+    return this.prisma.post.findMany({
+      where: {
+        featured: true,
+      },
+      include: includePostCategories,
+    });
+  }
+
+  async findByTheLastSixCreated(): Promise<Post[]> {
+    return this.prisma.post.findMany({
+      orderBy: { created_at: 'desc' },
+      take: 6,
+      include: includePostCategories,
+    });
+  }
+
+  async update(
+    slug: string,
+    { ...updatePostDto }: UpdatePostDto,
+  ): Promise<Post> {
     return this.prisma.post.update({
       where: { slug },
       data: {
@@ -75,7 +84,7 @@ export class PostRepository {
     });
   }
 
-  async remove(slug: string) {
+  async remove(slug: string): Promise<Post> {
     return this.prisma.post.delete({
       where: { slug },
     });

@@ -24,25 +24,35 @@ export class PostsController {
   }
 
   @Get()
-  async findAll(@Query() query: QueryParams) {
-    return this.postsService.findAll();
+  async findAll(@Query() query: QueryParams): Promise<PostEntity[]> {
+    return this.postsService.findAll(query);
   }
 
-  @Get(':slug')
-  async findOne(@Param('slug') slug: string) {
+  @Get('/get/:slug')
+  async findOne(@Param('slug') slug: string): Promise<PostEntity> {
     return this.postsService.findOne(slug);
+  }
+
+  @Get('/featured')
+  async findByFeatured(): Promise<PostEntity[]> {
+    return this.postsService.findByFeatured();
+  }
+
+  @Get('/cards')
+  async findByTheLastSixCreated(): Promise<PostEntity[]> {
+    return this.postsService.findByTheLastSixCreated();
   }
 
   @Patch(':slug')
   async update(
     @Param('slug') slug: string,
     @Body() updatePostDto: UpdatePostDto,
-  ) {
+  ): Promise<PostEntity> {
     return this.postsService.update(slug, updatePostDto);
   }
 
   @Delete(':slug')
-  async remove(@Param('slug') slug: string) {
+  async remove(@Param('slug') slug: string): Promise<PostEntity> {
     return this.postsService.remove(slug);
   }
 }
