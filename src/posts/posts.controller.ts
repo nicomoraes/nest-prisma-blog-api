@@ -12,7 +12,8 @@ import {
 import { PostsService } from './posts.service';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Post as PostEntity } from './entities/post.entity';
-import { QueryParams } from './interfaces/query-params';
+import { IQueryParams } from './interfaces/query-params';
+import { PostAndPages } from './interfaces/find-all-posts';
 
 @Controller('posts')
 export class PostsController {
@@ -24,7 +25,7 @@ export class PostsController {
   }
 
   @Get()
-  async findAll(@Query() query: QueryParams): Promise<PostEntity[]> {
+  async findAll(@Query() query: IQueryParams): Promise<PostAndPages> {
     return this.postsService.findAll(query);
   }
 

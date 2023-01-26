@@ -1,10 +1,12 @@
-import { PostRepository } from './repositories/posts.repository';
 import { Injectable } from '@nestjs/common';
+import { PostRepository } from './repositories/posts.repository';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { specialCharacterReplacer } from 'src/utils/formatter';
 import { Post as PostEntity } from './entities/post.entity';
-import { QueryParams } from './interfaces/query-params';
+import { IQueryParams } from './interfaces/query-params';
+import { PostAndPages } from './interfaces/find-all-posts';
+import { specialCharacterReplacer } from 'src/utils/formatter';
+
 @Injectable()
 export class PostsService {
   constructor(private readonly postRepository: PostRepository) {}
@@ -23,7 +25,7 @@ export class PostsService {
     return post;
   }
 
-  async findAll(query?: QueryParams): Promise<PostEntity[]> {
+  async findAll(query?: IQueryParams): Promise<PostAndPages> {
     return this.postRepository.findAll(query);
   }
 

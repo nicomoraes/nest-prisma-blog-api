@@ -4,7 +4,8 @@ import { CreatePostDto } from '../dto/create-post.dto';
 import { Post } from '@prisma/client';
 import { transformToDataObject } from 'src/utils/formatter';
 import { UpdatePostDto } from '../dto/update-post.dto';
-import { QueryParams } from '../interfaces/query-params';
+import { IQueryParams } from '../interfaces/query-params';
+import { PostAndPages } from '../interfaces/find-all-posts';
 import { includePostCategories } from 'src/utils/filters';
 
 @Injectable()
@@ -27,8 +28,11 @@ export class PostRepository {
     });
   }
 
-  async findAll(query?: QueryParams): Promise<Post[]> {
-    return this.prisma.post.findMany({
+  async findAll(query?: IQueryParams): Promise<PostAndPages> {
+    const QUANTITY_TO_TAKE = 4;
+    const page = query.page ? +query.page : 0;
+
+    const postsData = await this.prisma.post.findMany({
       where: {
         title: {
           contains: query?.title,
@@ -42,8 +46,20 @@ export class PostRepository {
           },
         },
       },
-      include: includePostCategories,
+      orderBy: {
+        created_at: 'desc',
+      },
+      take: QUANTITY_TO_TAKE,
+      skip: page * 4,
     });
+
+    return {
+      posts: postsData,
+      nextPage:
+        postsData.length === 0 || postsData.length < QUANTITY_TO_TAKE
+          ? null
+          : page + 1,
+    };
   }
 
   async findOne(slug: string): Promise<Post> {
